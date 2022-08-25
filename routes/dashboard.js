@@ -1,13 +1,12 @@
-const router = require('express').Router();
+const router = require("express").Router();
 
-router.get('/', (req, res) => {
+router.get("/", (req, res) => {
     res.json({
         error: null,
-        data: {
-            title: 'mi ruta protegida',
-            user: req.user
-        }
-    })
-})
+        title: "mi ruta protegida",
+        user: req.user,
+        token: req.token,
+    });
+});
 
-module.exports = router
+module.exports = router;
