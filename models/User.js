@@ -23,8 +23,10 @@ const userSchema = mongoose.Schema({
         default: Date.now,
     },
     rut: {
-        type: Number,
+        type: String,
         required: true,
+        min: 8,
+        max: 9,
     },
 });
 
