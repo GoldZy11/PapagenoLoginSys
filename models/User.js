@@ -18,6 +18,11 @@ const userSchema = mongoose.Schema({
         required: true,
         minlength: 6,
     },
+    cargo: {
+        type: String,
+        required: true,
+        minlength: 6,
+    },
     date: {
         type: Date,
         default: Date.now,

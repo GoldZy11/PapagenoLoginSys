@@ -9,6 +9,7 @@ const schemaRegister = Joi.object({
     email: Joi.string().min(6).max(255).required().email(),
     password: Joi.string().min(6).max(1024).required(),
     rut: Joi.string().min(8).max(9).required(),
+    cargo: Joi.string().min(3).max(255).required(),
 });
 
 const schemaLogin = Joi.object({
