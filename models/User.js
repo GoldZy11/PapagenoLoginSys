@@ -23,6 +23,11 @@ const userSchema = mongoose.Schema({
         required: true,
         minlength: 6,
     },
+    especialidad: {
+        type: String,
+        required: true,
+        minlength: 6,
+    },
     date: {
         type: Date,
         default: Date.now,

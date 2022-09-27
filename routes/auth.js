@@ -10,6 +10,19 @@ const schemaRegister = Joi.object({
     password: Joi.string().min(6).max(1024).required(),
     rut: Joi.string().min(8).max(9).required(),
     cargo: Joi.string().min(3).max(255).required(),
+    especialidad: Joi.string().min(3).max(255).required(),
+});
+const schemaEdit = Joi.object({
+    name: Joi.string().min(3).max(255),
+    email: Joi.string().min(6).max(255).required().email(),
+    password: Joi.string().min(6).max(1024),
+    confPassword: Joi.string().min(6).max(1024),
+    rut: Joi.string().min(8).max(9).required(),
+    cargo: Joi.string().min(3).max(255),
+    especialidad: Joi.string().min(3).max(255),
+});
+const schemaDelete = Joi.object({
+    rut: Joi.string().min(8).max(9).required(),
 });
 
 const schemaLogin = Joi.object({
@@ -27,9 +40,13 @@ router.post("/register", async (req, res) => {
         return res.status(400).json({ error: error.details[0].message });
     }
 
-    const isEmailExist = await User.findOne({ email: req.body.email });
-    if (isEmailExist) {
+    const isEmailExist = await User.find({ email: req.body.email });
+    if (isEmailExist > 1) {
         return res.status(400).json({ error: "Email ya registrado" });
+    }
+    const isRutExist = await User.find({ rut: req.body.rut });
+    if (isRutExist > 1) {
+        return res.status(400).json({ error: "Rut ya registrado" });
     }
     // hash contraseña
     const salt = await bcrypt.genSalt(10);
@@ -40,7 +57,7 @@ router.post("/register", async (req, res) => {
         password: password,
         rut: req.body.rut,
         cargo: req.body.cargo,
-
+        especialidad: req.body.especialidad
     });
     try {
         const savedUser = await user.save();
@@ -88,4 +105,71 @@ router.post("/login", async (req, res) => {
     });
 });
 
+router.put("/editUser", async (req, res) => {
+    // validate user
+    console.log(req.body);
+    const { error } = schemaEdit.validate(req.body);
+
+    if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+    }
+    const isRutExist = await User.findOne({ rut: req.body.rut });
+    console.log(isRutExist);
+    const isEmailExist = await User.findOne({ email: req.body.email });
+    if (isEmailExist != null) {
+        if (isEmailExist.rut != isRutExist.rut) {
+            return res.status(400).json({ error: "Email en uso" });
+        }
+    }
+    // hash contraseña
+    let password;
+    if (req.body.password) {
+        const salt = await bcrypt.genSalt(10);
+        password = await bcrypt.hash(req.body.password, salt);
+    }
+
+    try {
+        let reponse = await User.findOneAndUpdate(
+            { rut: req.body.rut },
+            req.body
+        );
+        res.json(reponse);
+    } catch (error) {
+        res.status(400).json({ error });
+    }
+});
+router.delete("/deleteUser/:rut", async (req, res) => {
+    // validate user
+    let rut = req.params.rut;
+    console.log(req.params.rut);
+
+    const isRutExist = await User.findOne({ rut: rut });
+    if (isRutExist === null)
+        return res.status(400).json({ error: "Rut inexistente" });
+    // hash contraseña
+    try {
+        let reponse = await isRutExist.delete();
+        res.json(reponse);
+    } catch (error) {
+        res.status(400).json({ error });
+    }
+});
+router.get("/allUsers", async (req, res) => {
+    // validate user
+    try {
+        res.json(await User.find());
+    } catch (error) {
+        res.status(400).json({ error });
+    }
+});
+router.get("/UserRut/:rut", async (req, res) => {
+    // validate user
+    let rut = req.params.rut;
+    // console.log("hola");
+    try {
+        res.json(await User.findOne({ rut: rut }));
+    } catch (error) {
+        res.status(400).json({ error });
+    }
+});
 module.exports = router;
