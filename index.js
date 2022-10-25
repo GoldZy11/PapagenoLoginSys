@@ -1,16 +1,18 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const bodyparser = require("body-parser");
-const cors = require('cors')
+import express from "express";
+import mongoose from "mongoose";
+import bodyParser from "body-parser";
+import cors from "cors";
+import dotenv from "dotenv";
+import * as auth from "./routes/auth.js";
 
-require("dotenv").config();
+dotenv.config();
 
 const app = express();
-app.use(cors())
+app.use(cors());
 
 // capturar body
-app.use(bodyparser.urlencoded({ extended: false }));
-app.use(bodyparser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // Conexión a Base de datos
 const uri = `mongodb+srv://${process.env.USER}:${process.env.PASSWORD}@cluster0.q5tii08.mongodb.net/${process.env.DBNAME}?retryWrites=true&w=majority`;
@@ -21,13 +23,10 @@ mongoose
     .catch((e) => console.log("error db:", e));
 
 // import routes
-const authRoutes = require("./routes/auth");
-const dashboadRoutes = require("./routes/dashboard");
-const verifyToken = require("./routes/validate-token");
 
 // route middlewares
-app.use("/api/dashboard", verifyToken, dashboadRoutes);
-app.use("/api/user", authRoutes);
+// app.use("/api/dashboard", verifyToken, dashboadRoutes);
+app.use("/api/user", auth);
 app.get("/", (req, res) => {
     res.json({
         estado: true,

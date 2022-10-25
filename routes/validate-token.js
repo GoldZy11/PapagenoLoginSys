@@ -1,4 +1,5 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
+
 // middleware to validate token (rutas protegidas)
 const verifyToken = (req, res, next) => {
     const token = req.header("auth-token");
