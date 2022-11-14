@@ -1,12 +1,12 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyparser = require("body-parser");
-const cors = require('cors')
+const cors = require("cors");
 
 require("dotenv").config();
 
 const app = express();
-app.use(cors())
+app.use(cors());
 
 // capturar body
 app.use(bodyparser.urlencoded({ extended: false }));
@@ -22,12 +22,22 @@ mongoose
 
 // import routes
 const authRoutes = require("./routes/auth");
+const instrumentRoutes = require("./routes/instruments");
+const proyectRoutes = require("./routes/proyects");
+const studentRoutes = require("./routes/students");
+const schoolRoutes = require("./routes/schools");
+
 const dashboadRoutes = require("./routes/dashboard");
 const verifyToken = require("./routes/validate-token");
 
 // route middlewares
 app.use("/api/dashboard", verifyToken, dashboadRoutes);
 app.use("/api/user", authRoutes);
+app.use("/api/instrument", instrumentRoutes);
+app.use("/api/proyect", proyectRoutes);
+app.use("/api/student", studentRoutes);
+app.use("/api/school", schoolRoutes);
+
 app.get("/", (req, res) => {
     res.json({
         estado: true,
