@@ -27,7 +27,7 @@ const studentSchema = mongoose.Schema({
     },
     proyect_id: {
         type: String,
-        required: false,
+        required: true,
         min: 0,
         max: 255,
     },

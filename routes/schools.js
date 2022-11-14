@@ -28,6 +28,20 @@ router.post("/add", async (req, res) => {
         res.status(400).json({ error });
     }
 });
+router.delete("/remove/:id", async (req, res) => {
+    // validate user
+    let id = req.params.id;
+    const isIdExist = await School.findOne({ _id: id });
+    if (isIdExist === null)
+        return res.status(400).json({ error: "Colegio inexistente" });
+    // hash contraseña
+    try {
+        let reponse = await isIdExist.delete();
+        res.json(reponse);
+    } catch (error) {
+        res.status(400).json({ error });
+    }
+});
 
 router.get("/get/byId/:id", async (req, res) => {
     let id = req.params.id;

@@ -69,8 +69,13 @@ router.get("/get/all", async (req, res) => {
 });
 
 router.put("/edit", async (req, res) => {
+    const { error } = schemaCreateInstrument.validate(req.body);
+    if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+    }
     // validate user
     const id = req.body._id;
+    console.log(req.body);
     const isIdExist = await Instrument.findOne({ _id: id });
     if (!isIdExist) {
         return res.status(400).json({ error: "Instrumento inexistente" });

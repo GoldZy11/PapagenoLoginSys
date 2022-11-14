@@ -10,7 +10,7 @@ const proyectSchema = mongoose.Schema({
     location: {
         type: String,
         required: true,
-        min: 6,
+        min: 2,
         max: 255,
     },
     teacherManager: {
@@ -25,7 +25,7 @@ const proyectSchema = mongoose.Schema({
     },
     id_school: {
         type: String,
-        required: true,
+        required: false,
         min: 6,
         max: 255,
     },

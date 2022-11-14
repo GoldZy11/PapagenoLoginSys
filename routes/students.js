@@ -8,12 +8,12 @@ const schemaStudent = Joi.object({
     direction: Joi.string().min(6).max(255).required(),
     school_id: Joi.string().min(6).max(255).required(),
     instrument_id: Joi.string(),
-    proyect_id: Joi.string(),
+    proyect_id: Joi.string().min(0).max(255).required(),
 });
 
 router.post("/add", async (req, res) => {
     // validate user
-    // console.log(req.body);
+    console.log(req.body);
 
     const { error } = schemaStudent.validate(req.body);
     if (error) {
@@ -49,6 +49,7 @@ router.delete("/remove/:id", async (req, res) => {
 router.get("/get/byId/:id", async (req, res) => {
     let id = req.params.id;
     try {
+        console.log(await Student.findOne({ _id: id }));
         res.json(await Student.findOne({ _id: id }));
     } catch (error) {
         res.status(400).json({ error });
@@ -58,6 +59,13 @@ router.get("/get/byId/:id", async (req, res) => {
 router.get("/get/all", async (req, res) => {
     try {
         res.json(await Student.find());
+    } catch (error) {
+        res.status(400).json({ error });
+    }
+});
+router.get("/get/all/withoutProyect", async (req, res) => {
+    try {
+        res.json(await Student.find({ proyect_id: "" }));
     } catch (error) {
         res.status(400).json({ error });
     }

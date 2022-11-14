@@ -1,11 +1,15 @@
 const router = require("express").Router();
 const Proyect = require("../models/Proyect");
+const Student = require("../models/Student");
 const Joi = require("@hapi/joi");
+const User = require("../models/User");
+const School = require("../models/School");
+const Instrument = require("../models/Instrument");
 
 const schemaProyect = Joi.object({
     name: Joi.string().min(6).max(255).required(),
     location: Joi.string().min(6).max(255).required(),
-    teacherManager: Joi.string().min(6).max(255).required(),
+    teacherManager: Joi.string().min(2).max(255).required(),
     id_school: Joi.string(),
     students: Joi.array(),
 });
@@ -49,7 +53,49 @@ router.delete("/remove/:id", async (req, res) => {
 router.get("/get/byId/:id", async (req, res) => {
     let id = req.params.id;
     try {
-        res.json(await Proyect.findOne({ _id: id }));
+        let { _id, name, location, teacherManager, id_school } =
+            await Proyect.findOne({ _id: id });
+        let teacherManagerName = await User.findOne({ _id: teacherManager });
+        let studentsInProyect = await Student.find({ proyect_id: id });
+        let students = [];
+        for (const student of studentsInProyect) {
+            let schoolInStudent = await School.findOne({
+                id_school: student.id_school,
+            });
+            console.log(student.instrument_id);
+            if (student.instrument_id != undefined) {
+                let instrumentInStudent = await Instrument.findOne({
+                    instrument_id: student.instrument_id,
+                });
+                var studentObj = {
+                    name: student.name,
+                    rut: student.rut,
+                    direction: student.direction,
+                    _id: student._id,
+                    instrument: instrumentInStudent.name,
+                    school: schoolInStudent,
+                };
+                students.push(studentObj);
+            } else {
+                var studentObj = {
+                    name: student.name,
+                    rut: student.rut,
+                    direction: student.direction,
+                    _id: student._id,
+                    instrument: "No tiene instrumento",
+                    school: schoolInStudent,
+                };
+                students.push(studentObj);
+            }
+        }
+        res.json({
+            _id,
+            name,
+            location,
+            teacherManager: teacherManagerName.name,
+            id_school,
+            students: students,
+        });
     } catch (error) {
         res.status(400).json({ error });
     }
@@ -57,7 +103,26 @@ router.get("/get/byId/:id", async (req, res) => {
 
 router.get("/get/all", async (req, res) => {
     try {
-        res.json(await Proyect.find());
+        let allProyects = await Proyect.find();
+        let allResponse = [];
+        for (const proyect of allProyects) {
+            let { _id, name, location, teacherManager, id_school } = proyect;
+
+            let studentsInProyect = await Student.find({ proyect_id: _id });
+            let teacherManagerName = await User.findOne({
+                _id: teacherManager,
+            });
+
+            allResponse.push({
+                _id,
+                name,
+                location,
+                teacherManager: teacherManagerName.name,
+                id_school,
+                students: studentsInProyect,
+            });
+        }
+        res.json(allResponse);
     } catch (error) {
         res.status(400).json({ error });
     }
