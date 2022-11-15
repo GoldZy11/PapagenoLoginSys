@@ -10,6 +10,7 @@ const schemaProyect = Joi.object({
     name: Joi.string().min(6).max(255).required(),
     location: Joi.string().min(6).max(255).required(),
     teacherManager: Joi.string().min(2).max(255).required(),
+    teacherAttendee: Joi.string().min(2).max(255),
     id_school: Joi.string(),
     students: Joi.array(),
 });
@@ -93,6 +94,7 @@ router.get("/get/byId/:id", async (req, res) => {
             name,
             location,
             teacherManager: teacherManagerName.name,
+            teacherAttendee,
             id_school,
             students: students,
         });
@@ -118,6 +120,7 @@ router.get("/get/all", async (req, res) => {
                 name,
                 location,
                 teacherManager: teacherManagerName.name,
+                teacherAttendee,
                 id_school,
                 students: studentsInProyect,
             });

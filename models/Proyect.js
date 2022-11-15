@@ -19,6 +19,12 @@ const proyectSchema = mongoose.Schema({
         min: 6,
         max: 255,
     },
+    teacherAttendee: {
+        type: String,
+        required: false,
+        min: 6,
+        max: 255,
+    },
     students: {
         type: Array,
         required: true,
