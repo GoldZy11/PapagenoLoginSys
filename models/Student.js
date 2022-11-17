@@ -7,6 +7,24 @@ const studentSchema = mongoose.Schema({
         min: 2,
         max: 255,
     },
+    contactNumber: {
+        type: String,
+        required: true,
+        min: 2,
+        max: 255,
+    },
+    nameAttorney: {
+        type: String,
+        required: true,
+        min: 2,
+        max: 255,
+    },
+    email: {
+        type: String,
+        required: true,
+        min: 2,
+        max: 255,
+    },
     rut: {
         type: String,
         required: true,

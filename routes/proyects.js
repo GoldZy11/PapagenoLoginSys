@@ -54,9 +54,17 @@ router.delete("/remove/:id", async (req, res) => {
 router.get("/get/byId/:id", async (req, res) => {
     let id = req.params.id;
     try {
-        let { _id, name, location, teacherManager, id_school } =
-            await Proyect.findOne({ _id: id });
+        let {
+            _id,
+            name,
+            location,
+            teacherManager,
+            id_school,
+            teacherAttendee,
+        } = await Proyect.findOne({ _id: id });
         let teacherManagerName = await User.findOne({ _id: teacherManager });
+        let teacherAttendeeName = await User.findOne({ _id: teacherAttendee });
+
         let studentsInProyect = await Student.find({ proyect_id: id });
         let students = [];
         for (const student of studentsInProyect) {
@@ -94,7 +102,7 @@ router.get("/get/byId/:id", async (req, res) => {
             name,
             location,
             teacherManager: teacherManagerName.name,
-            teacherAttendee,
+            teacherAttendee: teacherAttendeeName.name,
             id_school,
             students: students,
         });
@@ -107,20 +115,30 @@ router.get("/get/all", async (req, res) => {
     try {
         let allProyects = await Proyect.find();
         let allResponse = [];
+
         for (const proyect of allProyects) {
-            let { _id, name, location, teacherManager, id_school } = proyect;
+            let {
+                _id,
+                name,
+                location,
+                teacherManager,
+                id_school,
+                teacherAttendee,
+            } = proyect;
 
             let studentsInProyect = await Student.find({ proyect_id: _id });
             let teacherManagerName = await User.findOne({
                 _id: teacherManager,
             });
-
+            let teacherAsisName = await User.findOne({
+                _id: teacherAttendee,
+            });
             allResponse.push({
                 _id,
                 name,
                 location,
                 teacherManager: teacherManagerName.name,
-                teacherAttendee,
+                teacherAttendee: teacherAsisName.name,
                 id_school,
                 students: studentsInProyect,
             });

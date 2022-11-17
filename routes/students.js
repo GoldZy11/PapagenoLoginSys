@@ -4,6 +4,9 @@ const Joi = require("@hapi/joi");
 
 const schemaStudent = Joi.object({
     name: Joi.string().min(6).max(255).required(),
+    contactNumber: Joi.string().min(6).max(255).required(),
+    nameAttorney: Joi.string().min(6).max(255).required(),
+    email: Joi.string().min(6).max(255).required(),
     rut: Joi.string().min(8).max(9).required(),
     direction: Joi.string().min(6).max(255).required(),
     school_id: Joi.string().min(6).max(255).required(),
