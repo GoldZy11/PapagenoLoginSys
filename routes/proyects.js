@@ -67,30 +67,29 @@ router.get("/get/byId/:id", async (req, res) => {
 
         let studentsInProyect = await Student.find({ proyect_id: id });
         let students = [];
-        for (const student of studentsInProyect) {
+        for (const studentReq of studentsInProyect) {
             let schoolInStudent = await School.findOne({
-                id_school: student.id_school,
+                _id: studentReq.school_id,
             });
-            console.log(student.instrument_id);
-            if (student.instrument_id != undefined) {
+            if (studentReq.instrument_id != undefined) {
                 let instrumentInStudent = await Instrument.findOne({
-                    instrument_id: student.instrument_id,
+                    instrument_id: studentReq.instrument_id,
                 });
                 var studentObj = {
-                    name: student.name,
-                    rut: student.rut,
-                    direction: student.direction,
-                    _id: student._id,
+                    name: studentReq.name,
+                    rut: studentReq.rut,
+                    direction: studentReq.direction,
+                    _id: studentReq._id,
                     instrument: instrumentInStudent.name,
                     school: schoolInStudent,
                 };
                 students.push(studentObj);
             } else {
                 var studentObj = {
-                    name: student.name,
-                    rut: student.rut,
-                    direction: student.direction,
-                    _id: student._id,
+                    name: studentReq.name,
+                    rut: studentReq.rut,
+                    direction: studentReq.direction,
+                    _id: studentReq._id,
                     instrument: "No tiene instrumento",
                     school: schoolInStudent,
                 };

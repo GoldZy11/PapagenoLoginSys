@@ -10,7 +10,6 @@ const schemaRegister = Joi.object({
     password: Joi.string().min(6).max(1024).required(),
     rut: Joi.string().min(8).max(9).required(),
     cargo: Joi.string().min(3).max(255).required(),
-    especialidad: Joi.string().min(3).max(255).required(),
 });
 const schemaEdit = Joi.object({
     name: Joi.string().min(3).max(255),
@@ -19,7 +18,6 @@ const schemaEdit = Joi.object({
     confPassword: Joi.string().min(6).max(1024),
     rut: Joi.string().min(8).max(9).required(),
     cargo: Joi.string().min(3).max(255),
-    especialidad: Joi.string().min(3).max(255),
 });
 const schemaDelete = Joi.object({
     rut: Joi.string().min(8).max(9).required(),
@@ -94,10 +92,6 @@ router.post("/login", async (req, res) => {
         process.env.TOKEN_SECRET
     );
 
-    // res.header("auth-token", token).json({
-    //     error: null,
-    //     data: { token },
-    // });
     res.json({
         error: null,
         data: "exito bienvenido",

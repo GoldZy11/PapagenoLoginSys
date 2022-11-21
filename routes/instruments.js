@@ -6,8 +6,9 @@ const schemaCreateInstrument = Joi.object({
     name: Joi.string().min(2).max(255).required(),
     type: Joi.string().min(2).max(255).required(),
     state: Joi.string().min(2).max(1024).required(),
+    description: Joi.string().min(2).max(1024).required(),
     id_student: Joi.string().min(0).max(1024),
-    id_client: Joi.string().min(0).max(1024),
+    date: Joi.date(),
 });
 
 router.post("/add", async (req, res) => {
@@ -23,6 +24,7 @@ router.post("/add", async (req, res) => {
         name: req.body.name,
         type: req.body.type,
         state: req.body.state,
+        description: req.body.description,
         id_student: "",
         id_client: "",
     });
@@ -68,11 +70,23 @@ router.get("/get/all", async (req, res) => {
     }
 });
 
-router.put("/edit", async (req, res) => {
-    const { error } = schemaCreateInstrument.validate(req.body);
-    if (error) {
-        return res.status(400).json({ error: error.details[0].message });
+router.get("/get/free", async (req, res) => {
+    try {
+        res.json(
+            await (
+                await Instrument.find()
+            ).filter((instrument) => instrument.state === "Libre")
+        );
+    } catch (error) {
+        res.status(400).json({ error });
     }
+});
+
+router.put("/edit", async (req, res) => {
+    // const { error } = schemaCreateInstrument.validate(req.body);
+    // if (error) {
+    //     return res.status(400).json({ error: error.details[0].message });
+    // }
     // validate user
     const id = req.body._id;
     console.log(req.body);

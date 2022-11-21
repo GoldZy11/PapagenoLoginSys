@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const Student = require("../models/Student");
 const Joi = require("@hapi/joi");
+const Instrument = require("../models/Instrument");
 
 const schemaStudent = Joi.object({
     name: Joi.string().min(6).max(255).required(),
@@ -80,11 +81,53 @@ router.put("/edit", async (req, res) => {
     if (!isIdExist) {
         return res.status(400).json({ error: "Estudiante inexistente" });
     }
+    console.log(req.body.instrument_id);
+    if (req.body.instrument_id) {
+        const exInstrument = await Instrument.findOne({
+            _id: isIdExist.instrument_id,
+        });
+        const instrument = await Instrument.findOne({
+            _id: req.body.instrument_id,
+        });
+        if (!instrument) {
+            return res.status(400).json({ error: "Instrumento inexistente" });
+        }
+
+        try {
+            let { _id, name, type, id_student, __v, description } = instrument;
+            let rest = await Instrument.findOneAndUpdate(
+                { _id: exInstrument.instrument_id },
+                {
+                    _id: exInstrument._id,
+                    name: exInstrument.name,
+                    type: exInstrument.type,
+                    id_student: exInstrument.id_student,
+                    __v: exInstrument.__v,
+                    description: exInstrument.description,
+                    state: "Libre",
+                }
+            );
+            let ex = await Instrument.findOneAndUpdate(
+                { _id: req.body.instrument_id },
+                {
+                    _id,
+                    name,
+                    type,
+                    id_student,
+                    __v,
+                    description,
+                    state: "Prestado",
+                }
+            );
+        } catch (error) {
+            return res.status(400).json({ error });
+        }
+    }
     try {
         let reponse = await Student.findOneAndUpdate({ _id: id }, req.body);
-        res.json(reponse);
+        return res.json(reponse);
     } catch (error) {
-        res.status(400).json({ error });
+        return res.status(400).json({ error });
     }
 });
 module.exports = router;

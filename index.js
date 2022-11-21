@@ -26,6 +26,7 @@ const instrumentRoutes = require("./routes/instruments");
 const proyectRoutes = require("./routes/proyects");
 const studentRoutes = require("./routes/students");
 const schoolRoutes = require("./routes/schools");
+const luthierRoutes = require("./routes/luthier");
 
 const dashboadRoutes = require("./routes/dashboard");
 const verifyToken = require("./routes/validate-token");
@@ -37,6 +38,7 @@ app.use("/api/instrument", instrumentRoutes);
 app.use("/api/proyect", proyectRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/school", schoolRoutes);
+app.use("/api/luthier", luthierRoutes);
 
 app.get("/", (req, res) => {
     res.json({

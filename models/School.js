@@ -19,6 +19,12 @@ const schoolSchema = mongoose.Schema({
         min: 0,
         max: 255,
     },
+    email: {
+        type: String,
+        required: true,
+        min: 0,
+        max: 255,
+    },
     students: {
         type: Array,
     },

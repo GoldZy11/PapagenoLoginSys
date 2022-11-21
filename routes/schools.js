@@ -5,13 +5,11 @@ const schemaSchool = Joi.object({
     name: Joi.string().min(2).max(255).required(),
     phone: Joi.string().min(9).max(9).required(),
     direction: Joi.string().min(0).max(255).required(),
+    email: Joi.string().min(0).max(255).required(),
     students: Joi.array(),
 });
 
 router.post("/add", async (req, res) => {
-    // validate user
-    // console.log(req.body);
-
     const { error } = schemaSchool.validate(req.body);
     if (error) {
         return res.status(400).json({ error: error.details[0].message });
