@@ -73,14 +73,14 @@ router.get("/get/byId/:id", async (req, res) => {
             });
             if (studentReq.instrument_id != undefined) {
                 let instrumentInStudent = await Instrument.findOne({
-                    instrument_id: studentReq.instrument_id,
+                    _id: studentReq.instrument_id,
                 });
                 var studentObj = {
                     name: studentReq.name,
                     rut: studentReq.rut,
                     direction: studentReq.direction,
                     _id: studentReq._id,
-                    instrument: instrumentInStudent.name,
+                    instrument: instrumentInStudent,
                     school: schoolInStudent,
                 };
                 students.push(studentObj);
@@ -96,16 +96,29 @@ router.get("/get/byId/:id", async (req, res) => {
                 students.push(studentObj);
             }
         }
+
+        if (teacherAttendeeName != null) {
+            res.json({
+                _id,
+                name,
+                location,
+                teacherManager: teacherManagerName.name,
+                teacherAttendee: teacherAttendeeName.name,
+                id_school,
+                students: students,
+            });
+        }
         res.json({
             _id,
             name,
             location,
             teacherManager: teacherManagerName.name,
-            teacherAttendee: teacherAttendeeName.name,
+            // teacherAttendee: teacherAttendeeName.name,
             id_school,
             students: students,
         });
     } catch (error) {
+        console.log(error);
         res.status(400).json({ error });
     }
 });
@@ -114,7 +127,6 @@ router.get("/get/all", async (req, res) => {
     try {
         let allProyects = await Proyect.find();
         let allResponse = [];
-
         for (const proyect of allProyects) {
             let {
                 _id,
@@ -126,24 +138,39 @@ router.get("/get/all", async (req, res) => {
             } = proyect;
 
             let studentsInProyect = await Student.find({ proyect_id: _id });
+
             let teacherManagerName = await User.findOne({
                 _id: teacherManager,
             });
             let teacherAsisName = await User.findOne({
                 _id: teacherAttendee,
             });
+
+            if (teacherAsisName != null) {
+                allResponse.push({
+                    _id,
+                    name,
+                    location,
+                    teacherManager: teacherManagerName.name,
+                    teacherAttendee: teacherAsisName.name,
+                    id_school,
+                    students: studentsInProyect,
+                });
+            }
             allResponse.push({
                 _id,
                 name,
                 location,
                 teacherManager: teacherManagerName.name,
-                teacherAttendee: teacherAsisName.name,
+                // teacherAttendee: teacherAsisName.name,
                 id_school,
                 students: studentsInProyect,
             });
         }
+
         res.json(allResponse);
     } catch (error) {
+        console.log(error);
         res.status(400).json({ error });
     }
 });

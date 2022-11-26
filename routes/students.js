@@ -81,11 +81,14 @@ router.put("/edit", async (req, res) => {
     if (!isIdExist) {
         return res.status(400).json({ error: "Estudiante inexistente" });
     }
-    console.log(req.body.instrument_id);
+    console.log(isIdExist);
     if (req.body.instrument_id) {
-        const exInstrument = await Instrument.findOne({
-            _id: isIdExist.instrument_id,
-        });
+        await Instrument.findOneAndUpdate(
+            { _id: isIdExist.instrument_id },
+            {
+                state: "Libre",
+            }
+        );
         const instrument = await Instrument.findOne({
             _id: req.body.instrument_id,
         });
@@ -95,19 +98,8 @@ router.put("/edit", async (req, res) => {
 
         try {
             let { _id, name, type, id_student, __v, description } = instrument;
-            let rest = await Instrument.findOneAndUpdate(
-                { _id: exInstrument.instrument_id },
-                {
-                    _id: exInstrument._id,
-                    name: exInstrument.name,
-                    type: exInstrument.type,
-                    id_student: exInstrument.id_student,
-                    __v: exInstrument.__v,
-                    description: exInstrument.description,
-                    state: "Libre",
-                }
-            );
-            let ex = await Instrument.findOneAndUpdate(
+
+            await Instrument.findOneAndUpdate(
                 { _id: req.body.instrument_id },
                 {
                     _id,
